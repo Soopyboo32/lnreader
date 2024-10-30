@@ -1,5 +1,11 @@
-import React, { useEffect, useMemo } from 'react';
-import { NativeEventEmitter, NativeModules, StatusBar } from 'react-native';
+import React, { useEffect, useMemo, useRef } from 'react';
+import {
+  Dimensions,
+  NativeEventEmitter,
+  NativeModules,
+  StatusBar,
+  View,
+} from 'react-native';
 import WebView from 'react-native-webview';
 import color from 'color';
 
@@ -21,6 +27,7 @@ import { getBatteryLevelSync } from 'react-native-device-info';
 import * as Speech from 'expo-speech';
 import { PLUGIN_STORAGE } from '@utils/Storages';
 import { useChapterContext } from '../ChapterContext';
+import AutoHeightWebView from 'react-native-autoheight-webview';
 
 type WebViewPostEvent = {
   type: string;
@@ -30,10 +37,11 @@ type WebViewPostEvent = {
 type WebViewReaderProps = {
   html: string;
   nextChapter?: ChapterInfo;
-  webViewRef: React.RefObject<WebView>;
+  webViewRef: React.RefObject<WebView> | null;
   saveProgress(percentage: number): void;
   onPress(): void;
   navigateChapter(position: 'NEXT' | 'PREV'): void;
+  finishedLoading(): void;
 };
 
 const onLogMessage = (payload: { nativeEvent: { data: string } }) => {
@@ -62,7 +70,10 @@ const WebViewReader: React.FC<WebViewReaderProps> = ({
   saveProgress,
   onPress,
   navigateChapter,
+  finishedLoading,
 }) => {
+  let webViewRef2 = useRef<WebView>(null);
+  if (!webViewRef) webViewRef = webViewRef2;
   const { novel, chapter } = useChapterContext();
   const theme = useTheme();
   const readerSettings = useMemo(
@@ -118,14 +129,21 @@ const WebViewReader: React.FC<WebViewReaderProps> = ({
   }, []);
 
   return (
-    <WebView
+    <AutoHeightWebView
       ref={webViewRef}
-      style={{ backgroundColor: readerSettings.theme }}
+      style={{
+        backgroundColor: readerSettings.theme,
+        width: Dimensions.get('window').width - 20,
+        minHeight: 10,
+      }}
       allowFileAccess={true}
       originWhitelist={['*']}
       scalesPageToFit={true}
       showsVerticalScrollIndicator={false}
       javaScriptEnabled={true}
+      onSizeUpdated={s => {
+        if (s.height) finishedLoading();
+      }}
       onMessage={(ev: { nativeEvent: { data: string } }) => {
         __DEV__ && onLogMessage(ev);
         const event: WebViewPostEvent = JSON.parse(ev.nativeEvent.data);
