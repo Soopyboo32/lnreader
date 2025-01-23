@@ -131,6 +131,11 @@ const getPlugin = (pluginId: string) => {
   return plugins[pluginId];
 };
 
+const unloadPlugin = async (pluginId: string) => {
+  plugins[pluginId] = undefined;
+  await pluginThread.unloadPlugin(pluginId);
+};
+
 const LOCAL_PLUGIN_ID = 'local';
 
 export {
@@ -138,6 +143,7 @@ export {
   getPluginAsync,
   installPlugin,
   uninstallPlugin,
+  unloadPlugin,
   updatePlugin,
   fetchPlugins,
   LOCAL_PLUGIN_ID,

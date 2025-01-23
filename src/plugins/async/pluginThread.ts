@@ -11,6 +11,8 @@ import {
 
 interface PluginThread {
   initPlugin(pluginId: string, pluginCode: string): Promise<Plugin>;
+
+  unloadPlugin(pluginId: string): Promise<void>;
 }
 
 export function getPluginThread(): PluginThread {
@@ -124,6 +126,10 @@ export function getPluginThread(): PluginThread {
       };
       return plg;
     },
+    unloadPlugin: async (pluginId: string) => {
+      let context = await getPluginContext();
+      await context.eval(`pluginsMap.delete(${JSON.stringify(pluginId)})`);
+    },
   };
 }
 
@@ -222,13 +228,13 @@ async function makePluginContext(): Promise<JsContext> {
   let con = await PluginManager.createJsContext(
     // language=HTML
     `
-		<!DOCTYPE html>
-		<html>
-		<script src="http://localhost:8081/${
-      __DEV__ ? 'assets' : 'android_asset'
-    }/plugin_deps/bundle.js"></script>
-		</html>
-    `,
+			<!DOCTYPE html>
+			<html>
+			<script src="http://localhost:8081/${
+        __DEV__ ? 'assets' : 'android_asset'
+      }/plugin_deps/bundle.js"></script>
+			</html>
+        `,
     (data: string) => {
       const event = JSON.parse(data, (key, val) => {
         if (
