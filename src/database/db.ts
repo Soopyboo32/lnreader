@@ -1,5 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 import {
+  addSortContentsToTable,
   createCategoriesTableQuery,
   createCategoryDefaultQuery,
   createCategoryTriggerQuery,
@@ -35,6 +36,8 @@ export const createTables = () => {
     tx.executeSql(createRepositoryTableQuery);
     tx.executeSql(addHiddenColumnQuery);
   });
+
+  addSortContentsToTable(db);
 };
 
 /**
