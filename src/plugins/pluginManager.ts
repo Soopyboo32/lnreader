@@ -100,10 +100,11 @@ const loadingPlugins = new Map();
 
 const getPluginAsync = async (
   pluginId: string,
+  reload = false,
 ): Promise<Plugin | undefined> => {
-  if (!plugins[pluginId]) {
+  if (!plugins[pluginId] || reload) {
     let loading = loadingPlugins.get(pluginId);
-    if (loading) {
+    if (loading && !reload) {
       return await loading;
     }
     const filePath = `${PLUGIN_STORAGE}/${pluginId}/index.js`;
@@ -131,11 +132,6 @@ const getPlugin = (pluginId: string) => {
   return plugins[pluginId];
 };
 
-const unloadPlugin = async (pluginId: string) => {
-  plugins[pluginId] = undefined;
-  await pluginThread.unloadPlugin(pluginId);
-};
-
 const LOCAL_PLUGIN_ID = 'local';
 
 export {
@@ -143,7 +139,6 @@ export {
   getPluginAsync,
   installPlugin,
   uninstallPlugin,
-  unloadPlugin,
   updatePlugin,
   fetchPlugins,
   LOCAL_PLUGIN_ID,
