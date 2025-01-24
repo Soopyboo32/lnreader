@@ -222,11 +222,11 @@ async function makePluginContext(): Promise<JsContext> {
   let con = await PluginManager.createJsContext(
     // language=HTML
     `
-			<!DOCTYPE html>
-			<html>
-			<script src="http://localhost:8081/assets/plugin_deps/bundle.js"></script>
-			</html>
-        `,
+      <!DOCTYPE html>
+      <html>
+      <script src="http://localhost:8081/assets/plugin_deps/bundle.js"></script>
+      </html>
+    `,
     (data: string) => {
       const event = JSON.parse(data, (key, val) => {
         if (
@@ -579,7 +579,6 @@ async function makePluginContext(): Promise<JsContext> {
 			 */
 			get(key, raw) {
 				const storedItem = this.#data.get(key);
-				console.log("Getting", key, storedItem);
 				if (storedItem) {
 					const item = JSON.parse(storedItem);
 					if (item.expires) {
