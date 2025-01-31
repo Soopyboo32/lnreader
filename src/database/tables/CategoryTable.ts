@@ -1,5 +1,5 @@
 import { getString } from '@strings/translations';
-import { SQLiteDatabase } from 'expo-sqlite';
+import { SQLTransaction } from 'expo-sqlite';
 import { txnErrorCallback } from '@database/utils/helpers';
 
 export const createCategoriesTableQuery = `
@@ -20,25 +20,23 @@ export const createCategoryTriggerQuery = `
 
 // if category with id = 2 exists, nothing in db.ts file is executed
 export const createCategoryDefaultQuery = `
-INSERT INTO Category (id, name, sort) VALUES 
-  (1, "${getString('categories.default')}", 1),
-  (2, "${getString('categories.local')}", 2)
+    INSERT INTO Category (id, name, sort)
+    VALUES (1, "${getString('categories.default')}", 1),
+           (2, "${getString('categories.local')}", 2)
 `;
 
-export const addSortContentsToTable = (db: SQLiteDatabase) => {
-  db.transaction(tx => {
-    tx.executeSql(
-      'PRAGMA table_info("Category");',
-      [],
-      (tx2, resultSet) => {
-        const hasSortContents = !!resultSet.rows._array.find(
-          v => v.name === 'sortContents',
-        );
-        if (!hasSortContents) {
-          tx.executeSql('ALTER TABLE Category ADD COLUMN sortContents TEXT;');
-        }
-      },
-      txnErrorCallback,
-    );
-  });
+export const addSortContentsToTable = (tx: SQLTransaction) => {
+  tx.executeSql(
+    'PRAGMA table_info("Category");',
+    [],
+    (tx2, resultSet) => {
+      const hasSortContents = !!resultSet.rows._array.find(
+        v => v.name === 'sortContents',
+      );
+      if (!hasSortContents) {
+        tx.executeSql('ALTER TABLE Category ADD COLUMN sortContents TEXT;');
+      }
+    },
+    txnErrorCallback,
+  );
 };
