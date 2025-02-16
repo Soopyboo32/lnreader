@@ -12,6 +12,7 @@ import com.facebook.soloader.SoLoader
 import com.rajarsheechatterjee.EpubUtil.EpubUtilPackage
 import com.rajarsheechatterjee.FileManager.FileManagerPackage
 import com.rajarsheechatterjee.PluginManager.PluginManagerPackage
+import com.rajarsheechatterjee.WebServer.WebServerPackage
 import com.rajarsheechatterjee.VolumeButtonListener.VolumeButtonListenerPackage
 import com.rajarsheechatterjee.ZipArchive.ZipArchivePackage
 import expo.modules.ApplicationLifecycleDispatcher.onApplicationCreate
@@ -32,6 +33,7 @@ class MainApplication : Application(), ReactApplication {
                 packages.add(FileManagerPackage())
                 packages.add(EpubUtilPackage())
                 packages.add(PluginManagerPackage())
+                packages.add(WebServerPackage())
                 return packages
             }
 
