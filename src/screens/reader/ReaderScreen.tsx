@@ -42,7 +42,7 @@ import {
 } from '@hooks/persisted/useSettings';
 import {
   remoteReader,
-  useRemoteReaderEnabled,
+  useRemoteReader,
 } from '@screens/reader/remote/remoteReader';
 import { WebServer } from '@native/WebServer';
 import { useFullscreenMode } from '@hooks';
@@ -165,7 +165,8 @@ export const ChapterContent = ({
     [],
   );
 
-  const remoteReaderEnabled = useRemoteReaderEnabled();
+  const { enabled: remoteReaderEnabled, accessed: accessedWebView } =
+    useRemoteReader();
   const { setImmersiveMode } = useFullscreenMode();
   const [localIp, setLocalIp] = useState('');
   useEffect(() => {
@@ -203,28 +204,30 @@ export const ChapterContent = ({
             remoteReader.disable();
           }}
         >
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Text
+          {accessedWebView ? null : (
+            <View
               style={{
-                color: 'white',
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
-              Read at {localIp}:8000 on any other device on the same network
-            </Text>
-            <Text
-              style={{
-                color: 'white',
-              }}
-            >
-              (Click the screen to disable)
-            </Text>
-          </View>
+              <Text
+                style={{
+                  color: 'white',
+                }}
+              >
+                Read at {localIp}:8000 on any other device on the same network
+              </Text>
+              <Text
+                style={{
+                  color: 'white',
+                }}
+              >
+                (Click the screen to disable)
+              </Text>
+            </View>
+          )}
         </Pressable>
       </View>
     );
