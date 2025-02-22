@@ -198,6 +198,7 @@ export const ChapterContent = ({
 
     return (
       <View>
+        <KeepScreenAwake />
         <Pressable
           style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
           onPress={() => {
