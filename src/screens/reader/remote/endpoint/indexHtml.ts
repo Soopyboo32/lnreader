@@ -6,12 +6,14 @@ import {
 } from '@hooks/persisted/useSettings';
 import { defaultTheme } from '@theme/md3/defaultTheme';
 import { readerHtml } from '@screens/reader/components/WebViewReader';
+import { remoteReader } from '@screens/reader/remote/remoteReader';
 
 export function indexHtml(
   _req: HttpRequest,
   res: HttpResponse,
   serverState: ServerState,
 ) {
+  remoteReader.accessedWebView();
   let readerSettings = serverState.currentChapterContent?.readerSettings;
   if (!readerSettings) {
     readerSettings = initialChapterReaderSettings;
