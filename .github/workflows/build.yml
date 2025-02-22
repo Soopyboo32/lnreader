@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - merged-prs
+      - novel-server-build
 jobs:
   build-android:
     name: Build App
