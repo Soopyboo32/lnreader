@@ -1,5 +1,11 @@
-import React, { useRef, useCallback, useState, useEffect } from 'react';
-import { DrawerLayoutAndroid } from 'react-native';
+import React, {
+  useRef,
+  useCallback,
+  useState,
+  useEffect,
+  useMemo,
+} from 'react';
+import { DrawerLayoutAndroid, Pressable, Text, View } from 'react-native';
 
 import { useChapterGeneralSettings, useTheme } from '@hooks/persisted';
 
@@ -21,6 +27,25 @@ import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/typ
 import { useBackHandler } from '@hooks/index';
 import { get } from 'lodash-es';
 import { getPluginAsync } from '@plugins/pluginManager';
+import {
+  setRemoteReaderServerChapterData,
+  setRemoteReaderServerEnabled,
+} from '@screens/reader/remote/remoteReaderServer';
+import { getMMKVObject } from '@utils/mmkv/mmkv';
+import {
+  CHAPTER_GENERAL_SETTINGS,
+  CHAPTER_READER_SETTINGS,
+  ChapterGeneralSettings,
+  ChapterReaderSettings,
+  initialChapterGeneralSettings,
+  initialChapterReaderSettings,
+} from '@hooks/persisted/useSettings';
+import {
+  remoteReader,
+  useRemoteReaderEnabled,
+} from '@screens/reader/remote/remoteReader';
+import { WebServer } from '@native/WebServer';
+import { useFullscreenMode } from '@hooks';
 
 const Chapter = ({ route, navigation }: ChapterScreenProps) => {
   const drawerRef = useRef<DrawerLayoutAndroid>(null);
@@ -126,6 +151,84 @@ export const ChapterContent = ({
     }
     return false;
   });
+
+  const readerSettings = useMemo(
+    () =>
+      getMMKVObject<ChapterReaderSettings>(CHAPTER_READER_SETTINGS) ||
+      initialChapterReaderSettings,
+    [],
+  );
+  const chapterGeneralSettings = useMemo(
+    () =>
+      getMMKVObject<ChapterGeneralSettings>(CHAPTER_GENERAL_SETTINGS) ||
+      initialChapterGeneralSettings,
+    [],
+  );
+
+  const remoteReaderEnabled = useRemoteReaderEnabled();
+  const { setImmersiveMode } = useFullscreenMode();
+  const [localIp, setLocalIp] = useState('');
+  useEffect(() => {
+    if (!remoteReaderEnabled) {
+      return;
+    }
+    setImmersiveMode();
+    if (localIp) {
+      return;
+    }
+    WebServer.getLocalIpAddress().then(ip => setLocalIp(ip));
+  }, [remoteReaderEnabled]);
+  setRemoteReaderServerEnabled(remoteReaderEnabled);
+  if (remoteReaderEnabled) {
+    setRemoteReaderServerChapterData({
+      chapterHtml: chapterText,
+      loading,
+      error,
+      nextChapter,
+      prevChapter,
+      saveProgress,
+      navigateChapter,
+      readerSettings,
+      theme,
+      chapterGeneralSettings,
+      novel,
+      chapter,
+    });
+
+    return (
+      <View>
+        <Pressable
+          style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
+          onPress={() => {
+            remoteReader.disable();
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                color: 'white',
+              }}
+            >
+              Read at {localIp}:8000 on any other device on the same network
+            </Text>
+            <Text
+              style={{
+                color: 'white',
+              }}
+            >
+              (Click the screen to disable)
+            </Text>
+          </View>
+        </Pressable>
+      </View>
+    );
+  }
 
   if (error) {
     return (

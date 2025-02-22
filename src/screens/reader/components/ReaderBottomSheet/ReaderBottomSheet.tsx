@@ -17,6 +17,7 @@ import ReaderFontPicker from './ReaderFontPicker';
 import { overlay } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import { ReaderExternalButton } from '@screens/reader/components/ReaderBottomSheet/ReaderExternalButton';
 
 const ReaderTab: React.FC = () => {
   return (
@@ -38,6 +39,7 @@ const ReaderTab: React.FC = () => {
         unit="px"
       />
       <ReaderFontPicker />
+      <ReaderExternalButton />
     </View>
   );
 };
