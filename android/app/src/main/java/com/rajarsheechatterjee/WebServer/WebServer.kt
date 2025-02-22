@@ -90,12 +90,9 @@ class WebServer(context: ReactApplicationContext) :
                 val addrs: List<InetAddress> = Collections.list(intf.inetAddresses)
                 for (addr in addrs) {
                     if (!addr.isLoopbackAddress) {
-                        val sAddr = addr.hostAddress?.uppercase(Locale.getDefault())
-                        val address = InetAddress.getByName(sAddr)
-                        if (address is Inet6Address) {
-                            // It's ipv6, ignore
-                        } else if (address is Inet4Address) {
-                            // It's ipv4, return
+                        val sAddr = addr.hostAddress?.uppercase(Locale.getDefault()) ?: continue
+                        val isIPv4 = sAddr.indexOf(':') < 0;
+                        if (isIPv4) {
                             promise.resolve(sAddr)
                             return
                         }
