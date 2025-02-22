@@ -85,7 +85,7 @@ async function startRemoteReaderServer() {
             break;
           case 'save':
             if (event.data && typeof event.data === 'number') {
-              // saveProgress(event.data);
+              serverState.currentChapterContent?.saveProgress(event.data);
             }
             break;
           case 'speak':
