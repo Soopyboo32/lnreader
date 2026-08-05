@@ -111,6 +111,10 @@ android {
     }
 }
 
+configurations.configureEach {
+    resolutionStrategy.force "net.lingala.zip4j:zip4j:2.11.5"
+}
+
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
