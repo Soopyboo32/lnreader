@@ -9,7 +9,7 @@ import {
   setStatusBarColor,
 } from '@theme/utils/setBarColor';
 import { useAppSettings, usePlugins, useTheme } from '@hooks/persisted';
-import { useGithubUpdateChecker } from '@hooks/common/githubUpdateChecker';
+// import { useGithubUpdateChecker } from '@hooks/common/githubUpdateChecker';
 
 /**
  * Navigators
@@ -42,9 +42,9 @@ const MalTopNovels = React.lazy(
 const AniListTopNovels = React.lazy(
   () => import('../screens/browse/discover/AniListTopNovels'),
 );
-const NewUpdateDialog = React.lazy(
-  () => import('../components/NewUpdateDialog'),
-);
+// const NewUpdateDialog = React.lazy(
+//   () => import('../components/NewUpdateDialog'),
+// );
 const BrowseSettings = React.lazy(
   () => import('../screens/browse/settings/BrowseSettings'),
 );
@@ -109,7 +109,7 @@ const MainNavigator = () => {
     }
   }, [url]);
 
-  const { isNewVersion, latestRelease } = useGithubUpdateChecker();
+  // const { isNewVersion, latestRelease } = useGithubUpdateChecker();
 
   if (!isOnboarded) {
     return <OnboardingScreen />;
@@ -118,7 +118,7 @@ const MainNavigator = () => {
   return (
     // @ts-ignore
     <NavigationContainer theme={{ colors: theme, dark: theme.isDark }}>
-      {isNewVersion && <NewUpdateDialog newVersion={latestRelease} />}
+      {/*{isNewVersion && <NewUpdateDialog newVersion={latestRelease} />}*/}
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
         <Stack.Screen name="Novel" component={Novel} />
